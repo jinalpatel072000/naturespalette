@@ -1,0 +1,42 @@
+<?php
+session_start();
+if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!==true){
+  header("location:adminlogin.php");
+  exit;
+}
+
+    include ('C:\xampp\htdocs\naturespalette\include\common/config.php');
+     $id=0;
+    $id = $_GET['accept'];
+    echo $id;
+$result = $conn->query("SELECT * from  `member_exp1` where `exp_id` = '$id'; ") or die($conn->error); 
+   if(isset($_GET['accept'])){ 
+    if(isset($result->num_rows) && $result->num_rows > 0){
+        $row = $result->fetch_array(MYSQLI_ASSOC);
+           $title = $row['title'];
+           $description = $row['description'];
+           $attachments = $row['attachments'];
+           $name = $row['member_name'];
+           $bid=$row['batch_id'];
+        $query =mysqli_query($conn," insert into `member_exp` (`member_name`, `title`, `description`, `attachments`, `batch_id`) VALUES ('$name', '$title', '$description', '$attachments','$bid')"); 
+    }   
+
+               
+            $query = "DELETE FROM `member_exp1` WHERE `member_exp1`.`exp_id` = '$id';";
+        if(mysqli_query($conn, $query)) {
+    mysqli_close($conn);
+            echo "Account has been accepted.";
+            header("location:manageevents.php");
+        }else{
+            echo "Unknown error occured. Please try again.";
+        }
+
+            
+
+} else{
+            echo "Unknown error occured. Please try again.";
+        }
+   
+?>
+<br/><br/>
+<a href="manageevents.php">Back</a>
